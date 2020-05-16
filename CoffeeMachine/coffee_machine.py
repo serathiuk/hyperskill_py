@@ -1,16 +1,16 @@
-ESPRESSO_CODE = 1
+ESPRESSO_CODE = '1'
 ESPRESSO_WATER_NEEDS = 250
 ESPRESSO_MILK_NEEDS = 0
 ESPRESSO_COFFEE_NEEDS = 16
 ESPRESSO_COST = 4
 
-LATTE_CODE = 2
+LATTE_CODE = '2'
 LATTE_WATER_NEEDS = 350
 LATTE_MILK_NEEDS = 75
 LATTE_COFFEE_NEEDS = 20
 LATTE_COST = 7
 
-CAPPUCCINO_CODE = 3
+CAPPUCCINO_CODE = '3'
 CAPPUCCINO_WATER_NEEDS = 200
 CAPPUCCINO_MILK_NEEDS = 100
 CAPPUCCINO_COFFEE_NEEDS = 12
@@ -24,28 +24,30 @@ money = 550
 
 
 def main():
-    print_machine_report()
-
-    action = input('Write action (buy, fill, take):')
-    if action == 'buy':
-        choose_buy()
-    elif action == 'take':
-        take_money()
-    elif action == 'fill':
-        fill_machine()
-
-    print_machine_report()
+    while True:
+        action = input('Write action (buy, fill, take, remaining, exit):')
+        if action == 'buy':
+            choose_buy()
+        elif action == 'take':
+            take_money()
+        elif action == 'fill':
+            fill_machine()
+        elif action == 'remaining':
+            print_machine_report()
+        elif action == 'exit':
+            break
+        print()
 
 
 def choose_buy():
-    coffee_option = int(input('What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino:'))
+    coffee_option = input('What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino, back - to main menu:')
     if coffee_option == ESPRESSO_CODE:
         buy_espresso()
     elif coffee_option == LATTE_CODE:
         buy_latte()
     elif coffee_option == CAPPUCCINO_CODE:
         buy_cappuccino()
-    else:
+    elif coffee_option != 'back':
         print('Invalid coffee option.')
 
 
@@ -63,12 +65,22 @@ def buy_cappuccino():
 
 def buy_coffee_by_recipe(water_qty, milk_qty, coffee_qty, price):
     global water_stored, milk_stored, coffee_stored, disposable_cups, money
-    water_stored -= water_qty
-    milk_stored -= milk_qty
-    coffee_stored -= coffee_qty
-    disposable_cups -= 1
-    money += price
-    return True
+
+    if water_stored - water_qty < 0:
+        print('Sorry, not enough water!')
+    elif milk_stored - milk_qty < 0:
+        print('Sorry, not enough milk!')
+    elif coffee_stored - coffee_qty < 0:
+        print('Sorry, not enough coffee!')
+    elif coffee_stored - 1 < 0:
+        print('Sorry, not enough cup!')
+    else:
+        print('I have enough resources, making you a coffee!')
+        water_stored -= water_qty
+        milk_stored -= milk_qty
+        coffee_stored -= coffee_qty
+        disposable_cups -= 1
+        money += price
 
 
 def take_money():
